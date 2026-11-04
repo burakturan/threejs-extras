@@ -4,19 +4,16 @@ I'm building a 3D editor for galleries and museums in three.js, and every so oft
 for you to figure out. When the fix turns out small and general enough, it goes here as its own package, with a demo
 that shows the before and after.
 
-![light-slots demo](assets/light-slots.png)
-
-So far there's one:
+![spot-beam demo](assets/spot-beam.jpg)
 
 - [`@threejs-extras/light-slots`](packages/light-slots): adding or removing a lamp no longer recompiles every lit
   shader and freezes the view.
+- [`@threejs-extras/spot-beam`](packages/spot-beam): a visible spot light beam that fades into the wall and floor
+  instead of cutting them with a hard line.
 
 ## Try it
 
-[Live demo](https://burakturan.github.io/threejs-extras/). Press Add lamp a few times and watch the frame time, then
-tick Use LightSlots (it reloads the page) and do the same.
-
-Or locally:
+The [demos](https://burakturan.github.io/threejs-extras/) run in the browser. Or locally:
 
 ```bash
 pnpm install

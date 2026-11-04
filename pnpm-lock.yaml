@@ -11,6 +11,9 @@ importers:
       '@threejs-extras/light-slots':
         specifier: workspace:*
         version: link:packages/light-slots
+      '@threejs-extras/spot-beam':
+        specifier: workspace:*
+        version: link:packages/spot-beam
       three:
         specifier: ^0.187.0
         version: 0.187.0
@@ -26,6 +29,12 @@ importers:
         version: 6.4.5
 
   packages/light-slots:
+    dependencies:
+      three:
+        specifier: '>=0.150.0'
+        version: 0.187.0
+
+  packages/spot-beam:
     dependencies:
       three:
         specifier: '>=0.150.0'

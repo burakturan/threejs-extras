@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@threejs-extras/light-slots": "workspace:*",
+    "@threejs-extras/spot-beam": "workspace:*",
     "three": "^0.187.0"
   },
   "devDependencies": {
