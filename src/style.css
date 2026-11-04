@@ -1,0 +1,107 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: #111;
+  color: #eee;
+  font: 14px/1.4 system-ui, sans-serif;
+}
+canvas {
+  display: block;
+}
+#panel {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  width: 300px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: rgb(20 20 22 / 0.88);
+  box-shadow: 0 4px 24px rgb(0 0 0 / 0.4);
+}
+#panel h1 {
+  margin: 0 0 4px;
+  font-size: 15px;
+}
+#panel p {
+  margin: 0 0 12px;
+  color: #aaa;
+  font-size: 13px;
+}
+.row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+button {
+  flex: 1;
+  padding: 7px 0;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background: #222;
+  color: #eee;
+  cursor: pointer;
+}
+button:hover {
+  background: #2c2c30;
+}
+label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+dl {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+dt {
+  color: #aaa;
+}
+dd {
+  margin: 0;
+  text-align: right;
+}
+#freeze.bad {
+  color: #ff7a6b;
+}
+#freeze.good {
+  color: #7be08f;
+}
+.modes {
+  display: flex;
+  margin-bottom: 12px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.modes button {
+  border: 0;
+  border-radius: 0;
+}
+.modes button + button {
+  border-left: 1px solid #444;
+}
+.modes button.on {
+  background: #3a3a40;
+}
+.range {
+  display: grid;
+  grid-template-columns: 70px 1fr 32px;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: #aaa;
+  font-variant-numeric: tabular-nums;
+}
+.range input {
+  width: 100%;
+}
+.range output {
+  color: #eee;
+  text-align: right;
+}

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>threejs-extras · light-slots</title>
+  </head>
+  <body>
+    <div id="panel">
+      <h1>light-slots</h1>
+      <p>Add or remove a lamp and watch the frame it lands on. Without slots every lit shader compiles again.</p>
+      <label><input id="slots" type="checkbox" /> Use LightSlots (reloads the page)</label>
+      <div class="row">
+        <button id="add">Add lamp</button>
+        <button id="remove">Remove lamp</button>
+      </div>
+      <dl>
+        <dt>Lamps</dt>
+        <dd id="lamps">0</dd>
+        <dt>Area lights three counts</dt>
+        <dd id="counted">0</dd>
+        <dt>Last change, frame time</dt>
+        <dd id="freeze">-</dd>
+        <dt>Shaders compiled by it</dt>
+        <dd id="compiled">-</dd>
+        <dt>Shader programs held</dt>
+        <dd id="programs">0</dd>
+      </dl>
+    </div>
+    <script type="module" src="/src/light-slots.ts"></script>
+  </body>
+</html>

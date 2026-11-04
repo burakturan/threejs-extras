@@ -14,7 +14,7 @@ compiles.
 
 ## What it changes
 
-The [demo](https://burakturan.github.io/threejs-extras/) has 64 boxes, each with its own shader program on purpose
+The [demo](https://burakturan.github.io/threejs-extras/light-slots/) has 64 boxes, each with its own shader program on purpose
 (a furnished scene gets there through maps, normal maps, transparency and so on), and the lamps are `RectAreaLight`s.
 I added five lamps and removed two, timing the frame each change landed on with the GPU flushed. Desktop Chrome, NVIDIA
 card:

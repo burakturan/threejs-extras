@@ -1,4 +1,5 @@
 import { LightSlots } from '@threejs-extras/light-slots'
+import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js'
