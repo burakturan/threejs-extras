@@ -52,7 +52,7 @@ importers:
   packages/light-grid:
     dependencies:
       three:
-        specifier: '>=0.155.0'
+        specifier: '>=0.187.0'
         version: 0.187.0
 
   packages/light-slots:
