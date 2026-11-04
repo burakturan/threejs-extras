@@ -46,6 +46,19 @@ only then adds it. In the demo the longest frame went from about 930 ms to under
 
 [![add-when-ready demo](assets/add-when-ready.jpg)](https://burakturan.github.io/threejs-extras/add-when-ready/)
 
+## [light-grid](packages/light-grid)
+
+Sixty spots in a hall meant sixty light evaluations on every pixel, and a recompile whenever the count changed.
+`LightGrid` keeps the spots in a texture and cuts the floor plan into cells, each listing the few spots that reach it,
+so a pixel lights itself with those alone through the material's own lighting. In the demo the frame went from about
+10 ms to under 3, and it looks the same.
+
+**[Live demo](https://burakturan.github.io/threejs-extras/light-grid/)**
+
+| 60 SpotLights | LightGrid |
+| --- | --- |
+| [![sixty spot lights](assets/light-grid-lights.jpg)](https://burakturan.github.io/threejs-extras/light-grid/) | [![light grid](assets/light-grid-grid.jpg)](https://burakturan.github.io/threejs-extras/light-grid/) |
+
 ## Run locally
 
 ```bash

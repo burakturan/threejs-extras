@@ -14,6 +14,9 @@ importers:
       '@threejs-extras/lean-frame':
         specifier: workspace:*
         version: link:packages/lean-frame
+      '@threejs-extras/light-grid':
+        specifier: workspace:*
+        version: link:packages/light-grid
       '@threejs-extras/light-slots':
         specifier: workspace:*
         version: link:packages/light-slots
@@ -41,6 +44,12 @@ importers:
         version: 0.187.0
 
   packages/lean-frame:
+    dependencies:
+      three:
+        specifier: '>=0.155.0'
+        version: 0.187.0
+
+  packages/light-grid:
     dependencies:
       three:
         specifier: '>=0.155.0'

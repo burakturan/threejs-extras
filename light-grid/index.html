@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>threejs-extras · light-grid</title>
+  </head>
+  <body>
+    <div id="panel">
+      <h1>light-grid</h1>
+      <p>A hall with sixty spots, lit by sixty SpotLights or by the grid. It should look the same.</p>
+      <div class="modes" id="ways">
+        <button data-way="lights">60 SpotLights</button>
+        <button data-way="grid">LightGrid</button>
+      </div>
+      <dl>
+        <dt>Switch, first frame</dt>
+        <dd id="switch">-</dd>
+        <dt>GPU time per frame</dt>
+        <dd id="cost">-</dd>
+        <dt>Grid built in</dt>
+        <dd id="built">-</dd>
+        <dt>Spots a cell takes, most</dt>
+        <dd id="per">-</dd>
+        <dt>Cells reached by more</dt>
+        <dd id="crowded">-</dd>
+      </dl>
+    </div>
+    <script type="module" src="/src/light-grid.ts"></script>
+  </body>
+</html>

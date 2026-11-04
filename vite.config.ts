@@ -5,7 +5,7 @@ export default defineConfig(({ command }) => ({
   base: command === 'build' ? '/threejs-extras/' : '/',
   build: {
     rollupOptions: {
-      input: ['index.html', 'light-slots/index.html', 'spot-beam/index.html', 'lean-frame/index.html', 'add-when-ready/index.html'],
+      input: ['index.html', 'light-slots/index.html', 'spot-beam/index.html', 'lean-frame/index.html', 'add-when-ready/index.html', 'light-grid/index.html'],
     },
   },
 }))
