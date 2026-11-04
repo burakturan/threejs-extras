@@ -18,6 +18,8 @@ The depth part is what bit me. When I added a lighter render path for phones, th
 read and started showing through walls. So the beam doesn't guess: you render the scene into a target that keeps its
 depth, and hand that over.
 
+**[Live demo](https://burakturan.github.io/threejs-extras/spot-beam/)**
+
 ## Use
 
 ```ts

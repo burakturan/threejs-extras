@@ -12,6 +12,8 @@ for, which is why that part felt free.
 intensity, parked far away. A real lamp coming or going inside a step leaves the count where it was, and nothing
 compiles.
 
+**[Live demo](https://burakturan.github.io/threejs-extras/light-slots/)**
+
 ## What it changes
 
 The [demo](https://burakturan.github.io/threejs-extras/light-slots/) has 64 boxes, each with its own shader program on purpose

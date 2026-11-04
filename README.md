@@ -10,12 +10,16 @@ Hanging one more lamp froze the view for a second or more, because three.js reco
 number of lights changes. `LightSlots` keeps the count steady, so the frame a lamp lands on takes a couple of
 milliseconds instead.
 
+**[Live demo](https://burakturan.github.io/threejs-extras/light-slots/)**
+
 [![light-slots demo](assets/light-slots.png)](https://burakturan.github.io/threejs-extras/light-slots/)
 
 ## [spot-beam](packages/spot-beam)
 
 A visible beam for a spot light. The usual transparent cone cuts the wall and floor with a hard line; this one marches
 through the cone against the scene's depth, so it thins out where it meets a surface.
+
+**[Live demo](https://burakturan.github.io/threejs-extras/spot-beam/)**
 
 | Plain cone | SpotBeam |
 | --- | --- |
