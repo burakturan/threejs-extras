@@ -11,6 +11,10 @@ difference it makes, measured.
 
 ## Demo
 
+**Live:** https://burakturan.github.io/threejs-extras/
+
+Or run it locally:
+
 ```bash
 pnpm install
 pnpm dev
