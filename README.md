@@ -1,29 +1,26 @@
 # threejs-extras
 
-Small, focused fixes for things three.js leaves to you. Each one is a separate package with a demo that shows the
-difference it makes, measured.
+I'm building a 3D editor for galleries and museums in three.js, and every so often I hit something three.js leaves
+for you to figure out. When the fix turns out small and general enough, it goes here as its own package, with a demo
+that shows the before and after.
 
 ![light-slots demo](assets/light-slots.png)
 
-| Package | What it does |
-| --- | --- |
-| [`@threejs-extras/light-slots`](packages/light-slots) | Adding or removing a lamp no longer recompiles every shader and freezes the view. |
+So far there's one:
 
-## Demo
+- [`@threejs-extras/light-slots`](packages/light-slots): adding or removing a lamp no longer recompiles every lit
+  shader and freezes the view.
 
-**Live:** https://burakturan.github.io/threejs-extras/
+## Try it
 
-Or run it locally:
+[Live demo](https://burakturan.github.io/threejs-extras/). Press Add lamp a few times and watch the frame time, then
+tick Use LightSlots (it reloads the page) and do the same.
+
+Or locally:
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-Open the page, press **Add lamp** a few times, then tick **Use LightSlots** and do it again.
-
-More coming.
-
-## License
-
-MIT
+MIT licensed.
