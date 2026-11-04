@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>threejs-extras · rgbm-lightmap</title>
+  </head>
+  <body>
+    <div id="panel">
+      <h1>rgbm-lightmap</h1>
+      <p>One Blender bake of this room, written as a half-float EXR and as an RGBM PNG. Each press loads it again.</p>
+      <div class="modes" id="ways">
+        <button data-way="exr">EXR</button>
+        <button data-way="rgbm">RGBM PNG</button>
+      </div>
+      <dl>
+        <dt>Longest frame while loading</dt>
+        <dd id="stall">-</dd>
+        <dt>Until it showed</dt>
+        <dd id="shown">-</dd>
+        <dt>File</dt>
+        <dd id="size">-</dd>
+        <dt>On the GPU</dt>
+        <dd id="memory">-</dd>
+      </dl>
+    </div>
+    <script type="module" src="/src/rgbm-lightmap.ts"></script>
+  </body>
+</html>

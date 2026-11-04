@@ -1,0 +1,12 @@
+{
+  "name": "@threejs-extras/rgbm-lightmap",
+  "version": "0.1.0",
+  "description": "Baked HDR lightmaps for three.js as 8-bit RGBM PNGs: decoded off the main thread, half the GPU memory of a half-float EXR.",
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": "./src/index.ts",
+  "peerDependencies": {
+    "three": ">=0.187.0"
+  },
+  "license": "MIT"
+}

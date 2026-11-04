@@ -20,6 +20,9 @@ importers:
       '@threejs-extras/light-slots':
         specifier: workspace:*
         version: link:packages/light-slots
+      '@threejs-extras/rgbm-lightmap':
+        specifier: workspace:*
+        version: link:packages/rgbm-lightmap
       '@threejs-extras/spot-beam':
         specifier: workspace:*
         version: link:packages/spot-beam
@@ -59,6 +62,12 @@ importers:
     dependencies:
       three:
         specifier: '>=0.150.0'
+        version: 0.187.0
+
+  packages/rgbm-lightmap:
+    dependencies:
+      three:
+        specifier: '>=0.187.0'
         version: 0.187.0
 
   packages/spot-beam:

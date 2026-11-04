@@ -59,6 +59,19 @@ so a pixel lights itself with those alone through the material's own lighting. I
 | --- | --- |
 | [![sixty spot lights](assets/light-grid-lights.jpg)](https://burakturan.github.io/threejs-extras/light-grid/) | [![light grid](assets/light-grid-grid.jpg)](https://burakturan.github.io/threejs-extras/light-grid/) |
 
+## [rgbm-lightmap](packages/rgbm-lightmap)
+
+A baked HDR lightmap as a half-float EXR froze the view for about 300 ms while `EXRLoader` parsed it on the main
+thread. I wrote the same bake as an RGBM PNG, which the browser decodes off the main thread: the file went from 6.5 MB
+to 2.9 MB and GPU memory from 32 MB to 16. `readRGBM` turns it back into light in the material's shader, and I
+couldn't see a difference in the demo room.
+
+**[Live demo](https://burakturan.github.io/threejs-extras/rgbm-lightmap/)**
+
+| EXR | RGBM PNG |
+| --- | --- |
+| [![exr lightmap](assets/rgbm-lightmap-exr.jpg)](https://burakturan.github.io/threejs-extras/rgbm-lightmap/) | [![rgbm lightmap](assets/rgbm-lightmap-rgbm.jpg)](https://burakturan.github.io/threejs-extras/rgbm-lightmap/) |
+
 ## Run locally
 
 ```bash

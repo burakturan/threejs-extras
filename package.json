@@ -12,6 +12,7 @@
     "@threejs-extras/lean-frame": "workspace:*",
     "@threejs-extras/light-grid": "workspace:*",
     "@threejs-extras/light-slots": "workspace:*",
+    "@threejs-extras/rgbm-lightmap": "workspace:*",
     "@threejs-extras/spot-beam": "workspace:*",
     "three": "^0.187.0"
   },
