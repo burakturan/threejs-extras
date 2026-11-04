@@ -1,4 +1,5 @@
 import { SpotBeam, useDepth } from '@threejs-extras/spot-beam'
+import { GpuTimer, shown } from './gpu-timer'
 import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
@@ -156,15 +157,14 @@ function setMode(next: Mode) {
   mode = next
   for (const cone of cones) cone.visible = mode === 'cone'
   for (const button of document.querySelectorAll<HTMLButtonElement>('.modes button')) button.classList.toggle('on', button.dataset.mode === mode)
-  samples.length = 0
+  timer.reset()
 }
 
-const gl = renderer.getContext()
-const samples: number[] = []
+const timer = new GpuTimer(renderer)
 renderer.autoClear = false
 function frame() {
   controls.update()
-  const start = performance.now()
+  timer.begin()
   renderer.setRenderTarget(target)
   renderer.clear()
   renderer.render(scene, camera)
@@ -175,12 +175,8 @@ function frame() {
     useDepth(target, camera)
     renderer.render(beamScene, camera)
   }
-  gl.finish()
-  samples.push(performance.now() - start)
-  if (samples.length >= 30) {
-    $('cost').textContent = `${(samples.reduce((a, b) => a + b) / samples.length).toFixed(2)} ms`
-    samples.length = 0
-  }
+  timer.end()
+  shown(timer, $('cost'))
   requestAnimationFrame(frame)
 }
 
@@ -189,7 +185,7 @@ $<HTMLInputElement>('steps').addEventListener('input', (event) => {
   steps = Number((event.target as HTMLInputElement).value)
   $('stepsOut').textContent = String(steps)
   buildBeams()
-  samples.length = 0
+  timer.reset()
 })
 $<HTMLInputElement>('strength').addEventListener('input', (event) => {
   strength = Number((event.target as HTMLInputElement).value)

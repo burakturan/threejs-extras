@@ -69,8 +69,9 @@ straight to a scene, not under a moved group. `beam.dispose()` frees it.
 
 ## The catch
 
-It costs per pixel the beam covers, times `steps`. With three beams at 1064 by 847 on my desktop, the whole frame got
-roughly 0.1 to 0.3 ms slower, too small to tell the step counts apart from noise. I haven't measured it on a phone yet.
+It costs per pixel the beam covers, times `steps`. I timed it on the GPU with a timer query, at 1064 by 847 on a
+GTX 1060: the demo frame took 3.3 ms without beams and 3.2 to 3.7 ms with three, at 8, 24 or 64 steps alike. That is
+within the frame's own noise; the shadows cost far more. I haven't measured it on a phone yet.
 
 It doesn't know about shadows. A sculpture standing in the beam casts its shadow on the floor, but the haze behind it
 still glows. For a gallery spot aimed at a work that's rarely visible; for a spot shining through a window frame it
