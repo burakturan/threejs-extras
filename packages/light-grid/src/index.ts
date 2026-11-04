@@ -1,12 +1,15 @@
 import * as THREE from 'three'
 import { cellsOf, type Spot } from './cells'
+import { sightOf, sightTexture } from './sight'
+import { blockedBy } from './walls'
 
 /*
  * three lights every fragment with every light in the scene: sixty spots are sixty light evaluations per pixel, and a
  * new shader each time the count changes. Here the spots live in a texture, the floor plan is cut into cells, and each
  * cell lists the few spots whose light reaches it. A fragment finds its cell and lights itself with those alone,
  * through the material's own RE_Direct, so a spot looks as it would as a SpotLight without a shadow. The shader never
- * changes with the number of spots.
+ * changes with the number of spots. Given walls, each spot's light is also scaled by what it sees of the plan
+ * (./sight.ts), so the walls throw soft shadows.
  */
 
 export interface LightGridOptions {
@@ -16,6 +19,8 @@ export interface LightGridOptions {
   cell?: number
   /** The most spots one cell takes, a multiple of 4; the weakest past it are left out. */
   perCell?: number
+  /** With walls: how finely the plan is sampled for what each spot sees, and the two heights it's sampled at. */
+  sight?: { step?: number; heights?: [number, number] }
 }
 
 /* Texels per spot: position and cut-off, direction and decay, colour and cone, penumbra. */
@@ -45,6 +50,22 @@ uniform vec2 lightGridOrigin;
 uniform vec2 lightGridSize;
 uniform vec2 lightGridEnd;
 uniform float lightGridCell;
+uniform sampler2D lightGridSight;
+uniform vec4 lightGridSightSize;
+uniform float lightGridSightStep;
+uniform vec2 lightGridSightHeights;
+/* How much of a spot's light the walls let through to a point, 1 with no walls given. */
+float lightGridSightOf( int spot, vec3 world ) {
+  if ( lightGridSightSize.x <= 0.0 ) return 1.0;
+  vec2 at = clamp( ( world.xz - lightGridOrigin ) / lightGridSightStep - 0.5, vec2( 0.0 ), lightGridSightSize.xy - 1.0 ) + 0.5;
+  float t = clamp( ( world.y - lightGridSightHeights.x ) / ( lightGridSightHeights.y - lightGridSightHeights.x ), 0.0, 1.0 );
+  int across = int( lightGridSightSize.z );
+  vec2 size = vec2( lightGridSightSize.z * lightGridSightSize.x, lightGridSightSize.w );
+  int low = spot * 2;
+  vec2 lowAt = vec2( float( low % across ) * lightGridSightSize.x, float( low / across ) * lightGridSightSize.y ) + at;
+  vec2 highAt = vec2( float( ( low + 1 ) % across ) * lightGridSightSize.x, float( ( low + 1 ) / across ) * lightGridSightSize.y ) + at;
+  return mix( texture( lightGridSight, lowAt / size ).r, texture( lightGridSight, highAt / size ).r, t );
+}
 `
 /* After three's own lights, adding to the same reflected light. */
 const FRAGMENT = /* glsl */ `
@@ -57,6 +78,8 @@ material.multiScatteringCompensation = 1.0 + material.specularColorBlended * ( 1
   ivec2 gridCell = ivec2( floor( ( vGridWorld.xz - lightGridOrigin ) / lightGridCell ) );
   if ( all( greaterThanEqual( gridCell, ivec2( 0 ) ) ) && all( lessThan( gridCell, ivec2( lightGridSize ) ) ) && all( lessThanEqual( vGridWorld.xz, lightGridEnd ) ) ) {
     IncidentLight gridLight;
+    /* Read a little off the surface into the room it faces, so a lit wall doesn't take in the dark behind it. */
+    vec3 sightAt = vGridWorld + normalize( ( vec4( geometryNormal, 0.0 ) * viewMatrix ).xyz ) * lightGridSightStep * 0.6;
     for ( int part = 0; part < LIGHT_GRID_PER / 4; part ++ ) {
       vec4 slots = texelFetch( lightGridCells, ivec2( gridCell.x * ( LIGHT_GRID_PER / 4 ) + part, gridCell.y ), 0 );
       for ( int k = 0; k < 4; k ++ ) {
@@ -71,7 +94,7 @@ material.multiScatteringCompensation = 1.0 + material.specularColorBlended * ( 1
         gridLight.direction = normalize( lVector );
         float cone = getSpotAttenuation( c.w, d.x, dot( gridLight.direction, normalize( ( viewMatrix * vec4( b.xyz, 0.0 ) ).xyz ) ) );
         if ( cone <= 0.0 ) continue;
-        gridLight.color = c.rgb * cone * getDistanceAttenuation( length( lVector ), a.w, b.w );
+        gridLight.color = c.rgb * cone * getDistanceAttenuation( length( lVector ), a.w, b.w ) * lightGridSightOf( i, sightAt );
         gridLight.visible = true;
         RE_Direct( gridLight, geometryPosition, geometryNormal, geometryViewDir, geometryClearcoatNormal, material, reflectedLight );
       }
@@ -89,31 +112,48 @@ export class LightGrid {
     lightGridSize: { value: new THREE.Vector2() },
     lightGridEnd: { value: new THREE.Vector2() },
     lightGridCell: { value: 1 },
+    lightGridSight: { value: null as THREE.DataTexture | null },
+    lightGridSightSize: { value: new THREE.Vector4() },
+    lightGridSightStep: { value: 0.25 },
+    lightGridSightHeights: { value: new THREE.Vector2() },
   }
   readonly #area: THREE.Box3
   readonly #cell: number
   readonly #perCell: number
+  readonly #sightHeights: [number, number]
   readonly #marked = new WeakSet<THREE.Material>()
 
-  constructor({ area, cell = 1, perCell = 8 }: LightGridOptions) {
+  constructor({ area, cell = 1, perCell = 8, sight = {} }: LightGridOptions) {
     this.#area = area.clone()
     this.#cell = cell
     this.#perCell = Math.max(4, Math.ceil(perCell / 4) * 4)
     this.uniforms.lightGridCell.value = cell
+    this.uniforms.lightGridSightStep.value = sight.step ?? cell / 4
+    const height = area.max.y - area.min.y
+    this.#sightHeights = sight.heights ?? [area.min.y + 0.05 * height, area.min.y + 0.6 * height]
+    this.uniforms.lightGridSightHeights.value.fromArray(this.#sightHeights)
   }
 
   /**
    * Takes these spots as the grid's light. They needn't be in the scene; if they are, hide them, or they light twice.
+   * With `walls`, meshes that stand in the light, each taken as its box, spots light only what they can see.
    * Returns how many cells were reached by more spots than they could take.
    */
-  set(lights: THREE.SpotLight[]) {
+  set(lights: THREE.SpotLight[], { walls }: { walls?: THREE.Object3D[] } = {}) {
     const spots = lights.map(spotOf)
-    const grid = cellsOf(spots, this.#area, this.#cell, this.#perCell)
+    const blocked = walls?.length ? blockedBy(walls) : undefined
+    const sight = blocked && sightOf(spots, this.#area, this.uniforms.lightGridSightStep.value, this.#sightHeights, blocked)
+    /* A neighbour's spots only go where the sight texture can still cut them off. */
+    const grid = cellsOf(spots, this.#area, this.#cell, this.#perCell, blocked, !!sight)
     this.#replace('lightGridSpots', spotTexture(spots))
     this.#replace('lightGridCells', new THREE.DataTexture(grid.cells, grid.columns * (this.#perCell / 4), grid.rows, THREE.RGBAFormat, THREE.FloatType))
     this.uniforms.lightGridOrigin.value.set(this.#area.min.x, this.#area.min.z)
     this.uniforms.lightGridSize.value.set(grid.columns, grid.rows)
     this.uniforms.lightGridEnd.value.set(this.#area.max.x, this.#area.max.z)
+    this.uniforms.lightGridSight.value?.dispose()
+    this.uniforms.lightGridSight.value = sight ? sightTexture(sight) : null
+    if (sight) this.uniforms.lightGridSightSize.value.set(sight.width, sight.rows, sight.across, sight.height)
+    else this.uniforms.lightGridSightSize.value.set(0, 0, 1, 1)
     return grid.crowded
   }
 
@@ -143,6 +183,7 @@ export class LightGrid {
   dispose() {
     this.uniforms.lightGridCells.value?.dispose()
     this.uniforms.lightGridSpots.value?.dispose()
+    this.uniforms.lightGridSight.value?.dispose()
   }
 
   #replace(name: 'lightGridCells' | 'lightGridSpots', texture: THREE.DataTexture) {

@@ -1,6 +1,6 @@
 {
   "name": "@threejs-extras/light-grid",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Light a three.js scene with dozens of spot lights for the price of a few: each pixel takes only the spots that reach its cell.",
   "type": "module",
   "main": "src/index.ts",

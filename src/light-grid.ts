@@ -9,7 +9,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
  * sixty SpotLights in the scene, or the same sixty are handed to a LightGrid and the scene holds none. The switch
  * changes the shaders, so its first frame shows what compiling costs each way.
  */
-type Way = 'lights' | 'grid'
+type Way = 'lights' | 'grid' | 'walls'
 const $ = (id: string) => document.getElementById(id) as HTMLElement
 const PER_CELL = 8
 
@@ -44,11 +44,14 @@ function box(w: number, h: number, d: number, x: number, y: number, z: number, c
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshStandardMaterial({ color: colour, roughness }))
   mesh.position.set(x, y, z)
   keep(mesh)
+  return mesh
 }
 box(24, 0.1, 16, 0, -0.05, 0, 0x6e5a48, 0.6)
 box(24, 5, 0.2, 0, 2.5, -8, 0xd8d4cc)
 box(0.2, 5, 16, -12, 2.5, 0, 0xd8d4cc)
 box(0.2, 5, 16, 12, 2.5, 0, 0xd8d4cc)
+/* Two free partitions, the walls the grid is told about. */
+const walls = [box(5, 3, 0.15, -5, 1.5, -0.3, 0xd8d4cc), box(0.15, 3, 6, 3.6, 1.5, 2, 0xd8d4cc)]
 const knot = new THREE.TorusKnotGeometry(0.22, 0.08, 96, 12)
 for (let i = 0; i < 12; i++) {
   const x = (i % 6) * 3.6 - 9
@@ -68,29 +71,32 @@ for (let i = 0; i < 60; i++) {
   const z = row * 2.5 - 6.5
   const light = new THREE.SpotLight(new THREE.Color().setHSL(0.08 + (i % 7) * 0.012, 0.6, 0.75), 40, 9, THREE.MathUtils.degToRad(16 + (i % 3) * 6), 0.4, 2)
   light.position.set(x, 4.9, z)
-  /* The back row washes the wall, the rest fall on the floor and the plinths. */
+  /* The back row washes the wall; the rest fall the same slant on the floor, so what stands in them throws a shadow. */
   if (row === 0) light.target.position.set(x, 2.2, -7.9)
-  else light.target.position.set(x + Math.sin(i) * 0.8, 0, z + Math.cos(i) * 0.8)
+  else light.target.position.set(x + 1.6, 0, z + 1.6)
   scene.add(light.target)
   spots.push(light)
 }
-const building = performance.now()
-const crowded = grid.set(spots)
-$('built').textContent = `${(performance.now() - building).toFixed(1)} ms`
 $('per').textContent = String(PER_CELL)
-$('crowded').textContent = String(crowded)
+function build(withWalls: boolean) {
+  const building = performance.now()
+  const crowded = grid.set(spots, withWalls ? { walls } : {})
+  $('built').textContent = `${(performance.now() - building).toFixed(1)} ms`
+  $('crowded').textContent = String(crowded)
+}
 
 const timer = new GpuTimer(renderer)
-let way: Way = 'grid'
+let way: Way = 'walls'
 let timeNext = false
 let switched = 0
 function setWay(next: Way) {
   way = next
+  if (way !== 'lights') build(way === 'walls')
   for (const spot of spots) {
     if (way === 'lights') scene.add(spot)
     else spot.removeFromParent()
   }
-  for (const { mesh, plain, gridded } of pairs) mesh.material = way === 'grid' ? gridded : plain
+  for (const { mesh, plain, gridded } of pairs) mesh.material = way === 'lights' ? plain : gridded
   for (const button of document.querySelectorAll<HTMLButtonElement>('#ways button')) button.classList.toggle('on', button.dataset.way === way)
   timer.reset()
   timeNext = true
@@ -116,5 +122,5 @@ addEventListener('resize', () => {
   camera.updateProjectionMatrix()
   renderer.setSize(innerWidth, innerHeight)
 })
-setWay('grid')
+setWay('walls')
 requestAnimationFrame(frame)

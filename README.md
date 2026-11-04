@@ -50,14 +50,15 @@ only then adds it. In the demo the longest frame went from about 930 ms to under
 
 Sixty spots in a hall meant sixty light evaluations on every pixel, and a recompile whenever the count changed.
 `LightGrid` keeps the spots in a texture and cuts the floor plan into cells, each listing the few spots that reach it,
-so a pixel lights itself with those alone through the material's own lighting. In the demo the frame went from about
-10 ms to under 3, and it looks the same.
+so a pixel lights itself with those alone through the material's own lighting. In the demo GPU time went from about
+11 ms to under 3, and without walls I couldn't see a difference. Given the walls, the partitions cast shadows without
+sixty shadow maps.
 
 **[Live demo](https://burakturan.github.io/threejs-extras/light-grid/)**
 
-| 60 SpotLights | LightGrid |
+| 60 SpotLights | LightGrid with walls |
 | --- | --- |
-| [![sixty spot lights](assets/light-grid-lights.jpg)](https://burakturan.github.io/threejs-extras/light-grid/) | [![light grid](assets/light-grid-grid.jpg)](https://burakturan.github.io/threejs-extras/light-grid/) |
+| [![sixty spot lights](assets/light-grid-lights.jpg)](https://burakturan.github.io/threejs-extras/light-grid/) | [![light grid with walls](assets/light-grid-walls.jpg)](https://burakturan.github.io/threejs-extras/light-grid/) |
 
 ## [rgbm-lightmap](packages/rgbm-lightmap)
 
