@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>threejs-extras · add-when-ready</title>
+  </head>
+  <body>
+    <div id="panel">
+      <h1>add-when-ready</h1>
+      <p>Each press adds eight objects with materials the page hasn't seen. Orbit while it happens.</p>
+      <div class="modes" id="ways">
+        <button data-way="add">scene.add</button>
+        <button data-way="ready">Compiled first</button>
+      </div>
+      <div class="row">
+        <button id="add">Add 8 objects</button>
+        <button id="clear">Clear</button>
+      </div>
+      <dl>
+        <dt>Longest frame after the press</dt>
+        <dd id="stall">-</dd>
+        <dt>Until they showed</dt>
+        <dd id="shown">-</dd>
+        <dt>Parallel compile</dt>
+        <dd id="parallel">-</dd>
+      </dl>
+    </div>
+    <script type="module" src="/src/add-when-ready.ts"></script>
+  </body>
+</html>

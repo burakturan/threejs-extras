@@ -36,6 +36,16 @@ ran a little faster; on a desktop at the same pixel count it is actually slower,
 
 [![lean-frame demo](assets/lean-frame.jpg)](https://burakturan.github.io/threejs-extras/lean-frame/)
 
+## [add-when-ready](packages/add-when-ready)
+
+A new kind of object froze the view for most of a second while its shader compiled on the first frame. `addWhenReady`
+compiles it in the background with three's `compileAsync`, against the scene's lights and the frame's target, and
+only then adds it. In the demo the longest frame went from about 930 ms to under 15.
+
+**[Live demo](https://burakturan.github.io/threejs-extras/add-when-ready/)**
+
+[![add-when-ready demo](assets/add-when-ready.jpg)](https://burakturan.github.io/threejs-extras/add-when-ready/)
+
 ## Run locally
 
 ```bash

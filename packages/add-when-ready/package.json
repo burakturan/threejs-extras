@@ -1,0 +1,12 @@
+{
+  "name": "@threejs-extras/add-when-ready",
+  "version": "0.1.0",
+  "description": "Add an object to a three.js scene once its shaders are compiled, so the view does not freeze on it.",
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": "./src/index.ts",
+  "peerDependencies": {
+    "three": ">=0.158.0"
+  },
+  "license": "MIT"
+}

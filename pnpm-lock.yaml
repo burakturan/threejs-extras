@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@threejs-extras/add-when-ready':
+        specifier: workspace:*
+        version: link:packages/add-when-ready
       '@threejs-extras/lean-frame':
         specifier: workspace:*
         version: link:packages/lean-frame
@@ -30,6 +33,12 @@ importers:
       vite:
         specifier: ^6.0.0
         version: 6.4.5
+
+  packages/add-when-ready:
+    dependencies:
+      three:
+        specifier: '>=0.158.0'
+        version: 0.187.0
 
   packages/lean-frame:
     dependencies:
