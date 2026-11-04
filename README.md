@@ -25,6 +25,16 @@ through the cone against the scene's depth, so it thins out where it meets a sur
 | --- | --- |
 | [![plain cone](assets/spot-beam-cone.jpg)](https://burakturan.github.io/threejs-extras/spot-beam/) | [![spot-beam](assets/spot-beam.jpg)](https://burakturan.github.io/threejs-extras/spot-beam/) |
 
+## [lean-frame](packages/lean-frame)
+
+The composer chain I drew every frame through felt heavy on a phone. `LeanFrame` draws through one multisampled
+target and one output pass at a pixel ratio capped at 1.5. On my phone that held 37 MB of targets instead of 67 and
+ran a little faster; on a desktop at the same pixel count it is actually slower, and the README has the numbers.
+
+**[Live demo](https://burakturan.github.io/threejs-extras/lean-frame/)**
+
+[![lean-frame demo](assets/lean-frame.jpg)](https://burakturan.github.io/threejs-extras/lean-frame/)
+
 ## Run locally
 
 ```bash

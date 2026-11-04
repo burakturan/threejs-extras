@@ -1,0 +1,12 @@
+{
+  "name": "@threejs-extras/lean-frame",
+  "version": "0.1.0",
+  "description": "Draw a three.js frame through one multisampled target and one output pass, at a capped pixel ratio.",
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": "./src/index.ts",
+  "peerDependencies": {
+    "three": ">=0.155.0"
+  },
+  "license": "MIT"
+}

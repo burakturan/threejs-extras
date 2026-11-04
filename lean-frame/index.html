@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>threejs-extras · lean-frame</title>
+  </head>
+  <body>
+    <div id="panel">
+      <h1>lean-frame</h1>
+      <p>The same scene through the usual composer stack and through one target. Try a phone's pixel ratio.</p>
+      <div class="modes" id="paths">
+        <button data-path="composer">Composer + SMAA</button>
+        <button data-path="lean">LeanFrame</button>
+      </div>
+      <div class="modes" id="ratios">
+        <button data-ratio="1">1x</button>
+        <button data-ratio="2">2x</button>
+        <button data-ratio="3">3x</button>
+        <button data-ratio="device">This device</button>
+      </div>
+      <dl>
+        <dt>Drawing at</dt>
+        <dd id="size">-</dd>
+        <dt>Pixels per frame</dt>
+        <dd id="pixels">-</dd>
+        <dt>Target memory, estimated</dt>
+        <dd id="memory">-</dd>
+        <dt>Frames per second</dt>
+        <dd id="fps">-</dd>
+        <dt>GPU time per frame</dt>
+        <dd id="cost">-</dd>
+      </dl>
+    </div>
+    <script type="module" src="/src/lean-frame.ts"></script>
+  </body>
+</html>

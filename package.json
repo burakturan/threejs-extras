@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@threejs-extras/lean-frame": "workspace:*",
     "@threejs-extras/light-slots": "workspace:*",
     "@threejs-extras/spot-beam": "workspace:*",
     "three": "^0.187.0"
