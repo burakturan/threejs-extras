@@ -1,0 +1,12 @@
+{
+  "name": "@threejs-extras/light-slots",
+  "version": "0.1.0",
+  "description": "Keep three.js light counts steady so adding or removing a lamp does not recompile every shader.",
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": "./src/index.ts",
+  "peerDependencies": {
+    "three": ">=0.150.0"
+  },
+  "license": "MIT"
+}

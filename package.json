@@ -1,0 +1,20 @@
+{
+  "name": "threejs-extras",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@threejs-extras/light-slots": "workspace:*",
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.187.0",
+    "typescript": "^5.6.3",
+    "vite": "^6.0.0"
+  },
+  "license": "MIT"
+}
