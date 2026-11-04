@@ -16,14 +16,15 @@ milliseconds instead.
 
 ## [spot-beam](packages/spot-beam)
 
-A visible beam for a spot light. The usual transparent cone cuts the wall and floor with a hard line; this one marches
-through the cone against the scene's depth, so it thins out where it meets a surface.
+A visible beam for a spot light. A transparent cone cuts the wall and floor with a hard line, and fading it near the
+scene's depth softens the line but leaves a hard-sided surface. This one marches through the volume against the
+scene's depth, so the haze itself thins out where it meets a surface.
 
 **[Live demo](https://burakturan.github.io/threejs-extras/spot-beam/)**
 
-| Plain cone | SpotBeam |
-| --- | --- |
-| [![plain cone](assets/spot-beam-cone.jpg)](https://burakturan.github.io/threejs-extras/spot-beam/) | [![spot-beam](assets/spot-beam.jpg)](https://burakturan.github.io/threejs-extras/spot-beam/) |
+| Plain cone | Soft cone | SpotBeam |
+| --- | --- | --- |
+| [![plain cone](assets/spot-beam-cone.jpg)](https://burakturan.github.io/threejs-extras/spot-beam/) | [![soft cone](assets/spot-beam-soft.jpg)](https://burakturan.github.io/threejs-extras/spot-beam/) | [![spot-beam](assets/spot-beam.jpg)](https://burakturan.github.io/threejs-extras/spot-beam/) |
 
 ## [lean-frame](packages/lean-frame)
 

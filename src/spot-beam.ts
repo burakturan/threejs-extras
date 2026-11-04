@@ -1,4 +1,4 @@
-import { SpotBeam, useDepth } from '@threejs-extras/spot-beam'
+import { BeamDepth, SpotBeam, useDepth } from '@threejs-extras/spot-beam'
 import { GpuTimer, shown } from './gpu-timer'
 import './style.css'
 import * as THREE from 'three'
@@ -9,7 +9,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
  * beams are added on top reading that depth. The plain cone is the usual trick: a transparent additive cone that
  * fades along its length, depth tested like any mesh.
  */
-type Mode = 'none' | 'cone' | 'beam'
+type Mode = 'none' | 'cone' | 'soft' | 'beam'
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T
 
 const renderer = new THREE.WebGLRenderer({ antialias: false })
@@ -83,46 +83,78 @@ function buildBeams() {
 }
 buildBeams()
 
-/* The plain cone everybody starts with. */
-const coneMat = new THREE.ShaderMaterial({
-  uniforms: { colour: { value: new THREE.Color() }, strength: { value: strength } },
-  vertexShader: /* glsl */ `
-    varying float vAlong;
-    varying vec3 vNormal;
-    varying vec3 vView;
-    void main() {
-      vAlong = uv.y;
-      vNormal = normalize(normalMatrix * normal);
-      vec4 view = modelViewMatrix * vec4(position, 1.0);
-      vView = normalize(-view.xyz);
-      gl_Position = projectionMatrix * view;
-    }`,
-  fragmentShader: /* glsl */ `
-    uniform vec3 colour;
-    uniform float strength;
-    varying float vAlong;
-    varying vec3 vNormal;
-    varying vec3 vView;
-    void main() {
-      float rim = pow(abs(dot(normalize(vNormal), vView)), 2.0);
-      gl_FragColor = vec4(colour * strength * 0.6 * vAlong * rim, 1.0);
-    }`,
-  transparent: true,
-  depthWrite: false,
-  blending: THREE.AdditiveBlending,
-  side: THREE.DoubleSide,
-})
-const cones = spots.map((light) => {
-  const length = light.distance
-  const geometry = new THREE.ConeGeometry(Math.tan(light.angle) * length, length, 48, 1, true).translate(0, -length / 2, 0).rotateX(Math.PI)
-  const mat = coneMat.clone()
-  mat.uniforms.colour.value.set(light.color)
-  const cone = new THREE.Mesh(geometry, mat)
+/*
+ * The cones a beam usually starts as: a transparent additive surface, brighter where it faces the eye and fading along
+ * its length. The plain one is depth tested like any mesh, so it cuts what it meets with a line. The soft one is drawn
+ * after the scene and fades as its surface comes near the scene's depth, the soft particle trick.
+ */
+function coneMaterial(colour: THREE.ColorRepresentation, soft: boolean) {
+  return new THREE.ShaderMaterial({
+    defines: soft ? { SOFT: '' } : {},
+    uniforms: {
+      colour: { value: new THREE.Color(colour) },
+      strength: { value: strength },
+      depthTexture: BeamDepth.texture,
+      near: BeamDepth.near,
+      far: BeamDepth.far,
+      resolution: BeamDepth.resolution,
+    },
+    vertexShader: /* glsl */ `
+      varying float vAlong;
+      varying vec3 vNormal;
+      varying vec3 vView;
+      varying float vViewDepth;
+      void main() {
+        vAlong = uv.y;
+        vNormal = normalize(normalMatrix * normal);
+        vec4 view = modelViewMatrix * vec4(position, 1.0);
+        vView = normalize(-view.xyz);
+        vViewDepth = -view.z;
+        gl_Position = projectionMatrix * view;
+      }`,
+    fragmentShader: /* glsl */ `
+      #include <packing>
+      uniform vec3 colour;
+      uniform float strength;
+      uniform sampler2D depthTexture;
+      uniform float near;
+      uniform float far;
+      uniform vec2 resolution;
+      varying float vAlong;
+      varying vec3 vNormal;
+      varying vec3 vView;
+      varying float vViewDepth;
+      void main() {
+        float rim = pow(abs(dot(normalize(vNormal), vView)), 2.0);
+        float glow = strength * 0.6 * vAlong * rim;
+        #ifdef SOFT
+          float scene = -perspectiveDepthToViewZ(texture2D(depthTexture, gl_FragCoord.xy / resolution).x, near, far);
+          glow *= smoothstep(0.0, 1.0, scene - vViewDepth);
+        #endif
+        gl_FragColor = vec4(colour * glow, 1.0);
+        #include <tonemapping_fragment>
+        #include <colorspace_fragment>
+      }`,
+    transparent: true,
+    depthWrite: false,
+    depthTest: !soft,
+    blending: THREE.AdditiveBlending,
+    side: THREE.DoubleSide,
+  })
+}
+const softScene = new THREE.Scene()
+const coneGeometry = (light: THREE.SpotLight) =>
+  new THREE.ConeGeometry(Math.tan(light.angle) * light.distance, light.distance, 48, 1, true)
+    .translate(0, -light.distance / 2, 0)
+    .rotateX(Math.PI)
+const coneOf = (light: THREE.SpotLight, soft: boolean) => {
+  const cone = new THREE.Mesh(coneGeometry(light), coneMaterial(light.color, soft))
   cone.position.copy(light.position)
   cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), light.target.position.clone().sub(light.position).normalize())
-  scene.add(cone)
   return cone
-})
+}
+const cones = spots.map((light) => scene.add(coneOf(light, false)).children.at(-1) as THREE.Mesh<THREE.ConeGeometry, THREE.ShaderMaterial>)
+const softCones = spots.map((light) => softScene.add(coneOf(light, true)).children.at(-1) as THREE.Mesh<THREE.ConeGeometry, THREE.ShaderMaterial>)
 
 /* Linear HDR scene with its depth; shown through a quad that tone maps it. */
 const size = renderer.getDrawingBufferSize(new THREE.Vector2())
@@ -171,9 +203,9 @@ function frame() {
   renderer.setRenderTarget(null)
   renderer.clear()
   renderer.render(showScene, flat)
-  if (mode === 'beam') {
+  if (mode === 'soft' || mode === 'beam') {
     useDepth(target, camera)
-    renderer.render(beamScene, camera)
+    renderer.render(mode === 'beam' ? beamScene : softScene, camera)
   }
   timer.end()
   shown(timer, $('cost'))
@@ -191,7 +223,7 @@ $<HTMLInputElement>('strength').addEventListener('input', (event) => {
   strength = Number((event.target as HTMLInputElement).value)
   $('strengthOut').textContent = strength.toFixed(2)
   for (const beam of beams) beam.material.uniforms.strength.value = strength
-  for (const cone of cones) cone.material.uniforms.strength.value = strength
+  for (const cone of [...cones, ...softCones]) cone.material.uniforms.strength.value = strength
 })
 addEventListener('resize', () => {
   camera.aspect = innerWidth / innerHeight
